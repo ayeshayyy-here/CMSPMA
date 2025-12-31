@@ -74,13 +74,13 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.pma_app"
+    namespace "pk.gov.pitb.pma"
     defaultConfig {
-        applicationId "com.pma_app"
+        applicationId "pk.gov.pitb.pma"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 7
+        versionName "0.6"
     }
     signingConfigs {
         debug {
@@ -88,6 +88,14 @@ android {
             storePassword 'android'
             keyAlias 'androiddebugkey'
             keyPassword 'android'
+        }
+        release {
+            if (project.hasProperty('MYAPP_RELEASE_STORE_FILE')) {
+                storeFile file(MYAPP_RELEASE_STORE_FILE)
+                storePassword MYAPP_RELEASE_STORE_PASSWORD
+                keyAlias MYAPP_RELEASE_KEY_ALIAS
+                keyPassword MYAPP_RELEASE_KEY_PASSWORD
+            }
         }
     }
     buildTypes {
@@ -100,6 +108,7 @@ android {
             signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.release
         }
     }
 }
@@ -107,7 +116,15 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
+    implementation project(':react-native-splash-screen')
+    implementation project(':react-native-vector-icons')
+    implementation 'com.android.support:multidex:2.0.1'
+    debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
+    debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
+        exclude group:'com.squareup.okhttp3', module:'okhttp'
+    }
 
+    debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}")
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {
@@ -116,3 +133,11 @@ dependencies {
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle")
+def isNewArchitectureEnabled() {
+    // To opt-in for the New Architecture, you can either:
+    // - Set newArchEnabled to true inside the gradle.properties file
+    // - Invoke gradle with -newArchEnabled=true
+    // - Set an environment variable ORG_GRADLE_PROJECT_newArchEnabled=true
+    return project.hasProperty("newArchEnabled") && project.newArchEnabled == "true"
+}

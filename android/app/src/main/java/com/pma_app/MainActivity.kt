@@ -1,4 +1,4 @@
-package com.pma_app
+package pk.gov.pitb.pma
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

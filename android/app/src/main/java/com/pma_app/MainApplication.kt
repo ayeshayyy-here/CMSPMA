@@ -1,4 +1,4 @@
-package com.pma_app
+package pk.gov.pitb.pma
 
 import android.app.Application
 import com.facebook.react.PackageList
